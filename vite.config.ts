@@ -19,8 +19,12 @@ const __APP_INFO__ = {
   lastBuildTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 };
 
+// defineConfig() 也会返回UserConfig，所以说两种写法基本类似
 export default ({ command, mode }: ConfigEnv): UserConfig => {
-  const root = process.cwd();
+  const root = process.cwd(); // process.cwd() 方法返回 Node.js 进程的当前工作目录。/Users/kun/leaning/Vue/vue-vben-study
+
+  // 测试mode和loadEnv返回的值，当运行package.json中的dev命令时，mode为development；build命令时，mode为production。根据环境的不同，loadEnv加载不同环境的配置文件(.env.development/.production)。
+  console.log(mode, loadEnv(mode, root));
 
   const env = loadEnv(mode, root);
 
@@ -60,6 +64,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // Load proxy configuration from .env
       proxy: createProxy(VITE_PROXY),
     },
+    // 根据环境不同选择构建时是否自动丢弃console和debugger
     esbuild: {
       drop: VITE_DROP_CONSOLE ? ['console', 'debugger'] : [],
     },
@@ -98,6 +103,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
     plugins: createVitePlugins(viteEnv, isBuild),
 
+    // 预构建
     optimizeDeps: {
       // @iconify/iconify: The dependency is dynamically and virtually loaded by @purge-icons/generated, so it needs to be specified explicitly
       include: [
